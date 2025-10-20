@@ -306,6 +306,19 @@ export const clearAfkirHistory = async () => {
     await batch.commit();
     return true;
 };
+// Menghapus seluruh history kegiatan (latihan)
+export const clearKegiatanHistory = async () => {
+    const batch = writeBatch(db);
+    // Gunakan referensi koleksi latihan
+    const snapshot = await getDocs(latihanCollection); 
+    
+    snapshot.docs.forEach(doc => {
+        batch.delete(doc.ref);
+    });
+
+    await batch.commit();
+    return true;
+};
 
 // Tambah riwayat untuk unit individual + update kondisi unit
 export const addUnitHistory = (unitId, entry) => {

@@ -112,7 +112,69 @@ function generateKodeINV(namaAlat, tahun, index = 0) {
 
     return `${prefix}-${tahunSuffix}-${resultNumber.toString().padStart(4, '0')}`;
 }
+// --- TAMBAHKAN FUNGSI BARU INI ---
+async function backupAndClearKegiatan() {
+    // Ambil data dari state
+    const kegiatanData = (state.allKegiatan || []);
+    if (!kegiatanData.length) {
+        ui.showToast('Tidak ada data kegiatan untuk di-backup.', 'error');
+        return;
+    }
 
+    if (!confirm('Perhatian: Seluruh data catatan kegiatan akan di-backup ke file CSV dan dihapus dari sistem. Lanjutkan?')) {
+        return;
+    }
+
+    // Tentukan header CSV
+    const headers = ['NAMA_PENGGUNA', 'NAMA_KEGIATAN', 'TANGGAL', 'NAMA_ALAT', 'MERK', 'KODE_INV', 'JUMLAH', 'TIPE'];
+    let csv = headers.join(',') + '\n';
+    
+    // Uraikan data: satu baris per item yang digunakan
+    kegiatanData.forEach(kegiatan => {
+        const nama = kegiatan.namaPengguna || '';
+        const namaKegiatan = kegiatan.latihan || '';
+        const tgl = kegiatan.tanggalKegiatan && kegiatan.tanggalKegiatan.toDate ? kegiatan.tanggalKegiatan.toDate().toLocaleString('id-ID') : (kegiatan.timestamp && kegiatan.timestamp.toDate ? kegiatan.timestamp.toDate().toLocaleString('id-ID') : '');
+        
+        if (!kegiatan.items || kegiatan.items.length === 0) return;
+
+        kegiatan.items.forEach(item => {
+            const row = [
+                nama,
+                namaKegiatan,
+                tgl,
+                item.namaAlat || '',
+                item.merk || '-', // Ambil merk
+                item.kodeInv || '', // Untuk individual
+                item.jumlah || (item.isIndividual ? 1 : 0), // Untuk kumulatif
+                item.isIndividual ? 'Individual' : 'Kumulatif' //
+            ];
+            // Proses baris CSV
+            csv += row.map(v => '"' + String(v).replace(/"/g, '""') + '"').join(',') + '\n';
+        });
+    });
+
+    // Logika download file (sama seperti afkir)
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `Backup_History_Kegiatan_${new Date().toISOString().slice(0,10)}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => {
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }, 100);
+
+    // Panggil service untuk hapus data
+    try {
+        await services.clearKegiatanHistory(); // Panggil fungsi baru kita
+        ui.showToast('Data kegiatan berhasil di-backup dan dihapus dari sistem.', 'success');
+    } catch (error) {
+        console.error('Gagal menghapus history kegiatan:', error);
+        ui.showToast('Backup berhasil tapi gagal menghapus data dari sistem.', 'error');
+    }
+}
 // Backup/export seluruh history afkir ke CSV dan hapus data
 async function backupAndClearAfkir() {
     const afkirData = (state.allAfkir || []);
@@ -789,6 +851,8 @@ async function handleClickEvents(e) {
         case 'btn-cancel-afkir': ui.toggleModal('modal-afkir-alat', false); break;
         case 'btn-afkir-alat': ui.openAfkirModal(); break;
         case 'btn-backup-afkir': backupAndClearAfkir(); break;
+        case 'btn-backup-kegiatan': backupAndClearKegiatan(); break;
+        case 'btn-download-struk': ui.downloadStruk(target.dataset.id); break;
         case 'btn-download-struk': ui.downloadStruk(target.dataset.id); break;
     }
 
