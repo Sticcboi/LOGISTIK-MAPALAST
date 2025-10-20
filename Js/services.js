@@ -258,7 +258,7 @@ export const markAsReturned = async (peminjamanId) => {
             const unitRef = doc(unitAlatCollection, item.unitId);
             batch.update(unitRef, { status: 'Tersedia' });
         } else { // Item kumulatif
-            const alatRef = doc(alatCollection, item.jenisAlatId);
+            const alatRef = doc(alatCollection, item.alatId);
             batch.update(alatRef, { stok: increment(item.jumlah) });
         }
     }
