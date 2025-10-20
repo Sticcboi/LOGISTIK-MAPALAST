@@ -591,6 +591,7 @@ export function renderAlatList(searchTerm = '') {
         } else {
             const totalStok = items.reduce((sum, item) => sum + (item.stok || 0), 0);
             totalStokDisplay = `Total Stok: <span class="font-bold text-lg text-gray-900">${totalStok}</span>`;
+
         }
 
         const groupCard = document.createElement('div');
@@ -688,6 +689,7 @@ export function renderAlatList(searchTerm = '') {
             accordionContainer.appendChild(accordionEl);
         });
     });
+    loadingEl.style.display = 'none'
 }
 
 export function renderPeminjamanList() {
