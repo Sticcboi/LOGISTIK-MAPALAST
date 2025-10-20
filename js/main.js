@@ -1,63 +1,61 @@
-// Backup/export seluruh history afkir ke CSV dan hapus data
-async function backupAndClearAfkir() {
-    const afkirData = (state.allAfkir || []);
-    if (!afkirData.length) {
-        ui.showToast('Tidak ada data afkir untuk di-backup.', 'error');
-        return;
-    }
-
-    if (!confirm('Perhatian: Seluruh data afkir akan di-backup ke file Excel dan dihapus dari sistem. Lanjutkan?')) {
-        return;
-    }
-
-    const headers = ['NAMA', 'MERK', 'TAHUN', 'KATEGORI', 'WARNA', 'JUMLAH', 'KETERANGAN', 'KODE_INV', 'TIPE', 'TANGGAL'];
-    let csv = headers.join(',') + '\n';
-    
-    afkirData.forEach(item => {
-        const row = [
-            item.nama || '',
-            item.merk || '',
-            item.tahunPembelian || '',
-            item.kategori || '',
-            item.warna || '',
-            item.jumlahDiAfkir || '',
-            (item.alasan || '').replace(/\n/g, ' '),
-            item.kodeInv || '',
-            item.tipeAfkir || 'kumulatif',
-            item.afkirTimestamp && item.afkirTimestamp.toDate ? item.afkirTimestamp.toDate().toLocaleString('id-ID') : ''
-        ];
-        csv += row.map(v => '"' + String(v).replace(/"/g, '""') + '"').join(',') + '\n';
-    });
-
-    // Download file
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `Backup_History_Afkir_${new Date().toISOString().slice(0,10)}.csv`;
-    document.body.appendChild(a);
-    a.click();
-
-    // Hapus file dan URL setelah download
-    setTimeout(() => {
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-    }, 100);
-
-    // Hapus data afkir dari Firestore setelah backup
-    try {
-        await services.clearAfkirHistory();
-        ui.showToast('Data afkir berhasil di-backup dan dihapus dari sistem.', 'success');
-    } catch (error) {
-        console.error('Gagal menghapus history afkir:', error);
-        ui.showToast('Backup berhasil tapi gagal menghapus data dari sistem.', 'error');
-    }
-}
 // js/main.js
-
 import { state, resetState } from './state.js';
 import * as services from './services.js';
 import * as ui from './ui.js';
+
+// --- AWAL TAMBAHAN KODE: IDLE TIMER ---
+let idleTimer = null;
+// 1 jam = 60 menit * 60 detik * 1000 milidetik
+const IDLE_TIMEOUT = 3600000; 
+
+/**
+ * Fungsi ini akan dipanggil saat timer 1 jam tercapai.
+ */
+function performAutoLogout() {
+    console.log("Tidak ada aktivitas selama 1 jam. Logout otomatis...");
+    stopIdleTimer(); // Hentikan semua listener
+    services.logoutUser();
+    ui.showToast("Anda telah logout otomatis karena tidak aktif", "info");
+}
+
+/**
+ * Mengatur ulang timer kembali ke 1 jam.
+ */
+function resetIdleTimer() {
+    if (idleTimer) {
+        clearTimeout(idleTimer);
+    }
+    idleTimer = setTimeout(performAutoLogout, IDLE_TIMEOUT);
+}
+
+/**
+ * Memulai timer dan memasang listener aktivitas pengguna.
+ */
+function startIdleTimer() {
+    resetIdleTimer(); // Mulai timer
+    // Tambahkan listener untuk aktivitas
+    window.addEventListener('mousemove', resetIdleTimer);
+    window.addEventListener('keydown', resetIdleTimer);
+    window.addEventListener('click', resetIdleTimer);
+    window.addEventListener('touchstart', resetIdleTimer);
+    console.log("Idle timer dimulai.");
+}
+
+/**
+ * Menghentikan timer dan menghapus listener.
+ */
+function stopIdleTimer() {
+    if (idleTimer) {
+        clearTimeout(idleTimer);
+        idleTimer = null;
+    }
+    // Hapus listener agar tidak menumpuk
+    window.removeEventListener('mousemove', resetIdleTimer);
+    window.removeEventListener('keydown', resetIdleTimer);
+    window.removeEventListener('click', resetIdleTimer);
+    window.removeEventListener('touchstart', resetIdleTimer);
+    console.log("Idle timer dihentikan.");
+}
 
 // --- FUNGSI HELPER ---
 function generateKodeINV(namaAlat, tahun, index = 0) {
@@ -115,6 +113,62 @@ function generateKodeINV(namaAlat, tahun, index = 0) {
     return `${prefix}-${tahunSuffix}-${resultNumber.toString().padStart(4, '0')}`;
 }
 
+// Backup/export seluruh history afkir ke CSV dan hapus data
+async function backupAndClearAfkir() {
+    const afkirData = (state.allAfkir || []);
+    if (!afkirData.length) {
+        ui.showToast('Tidak ada data afkir untuk di-backup.', 'error');
+        return;
+    }
+
+    if (!confirm('Perhatian: Seluruh data afkir akan di-backup ke file Excel dan dihapus dari sistem. Lanjutkan?')) {
+        return;
+    }
+
+    const headers = ['NAMA', 'MERK', 'TAHUN', 'KATEGORI', 'WARNA', 'JUMLAH', 'KETERANGAN', 'KODE_INV', 'TIPE', 'TANGGAL'];
+    let csv = headers.join(',') + '\n';
+    
+    afkirData.forEach(item => {
+        const row = [
+            item.nama || '',
+            item.merk || '',
+            item.tahunPembelian || '',
+            item.kategori || '',
+            item.warna || '',
+            item.jumlahDiAfkir || '',
+            (item.alasan || '').replace(/\n/g, ' '),
+            item.kodeInv || '',
+            item.tipeAfkir || 'kumulatif',
+            item.afkirTimestamp && item.afkirTimestamp.toDate ? item.afkirTimestamp.toDate().toLocaleString('id-ID') : ''
+        ];
+        csv += row.map(v => '"' + String(v).replace(/"/g, '""') + '"').join(',') + '\n';
+    });
+
+    // Download file
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `Backup_History_Afkir_${new Date().toISOString().slice(0,10)}.csv`;
+    document.body.appendChild(a);
+    a.click();
+
+    // Hapus file dan URL setelah download
+    setTimeout(() => {
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }, 100);
+
+    // Hapus data afkir dari Firestore setelah backup
+    try {
+        await services.clearAfkirHistory();
+        ui.showToast('Data afkir berhasil di-backup dan dihapus dari sistem.', 'success');
+    } catch (error) {
+        console.error('Gagal menghapus history afkir:', error);
+        ui.showToast('Backup berhasil tapi gagal menghapus data dari sistem.', 'error');
+    }
+}
+
 function processRow(items) {
     // Buat string CSV dengan benar, handle nilai yang mengandung koma/quotes
     let row = '';
@@ -128,6 +182,7 @@ function processRow(items) {
     });
     return row + '\n';
 }
+
 
 function exportToXlsx(filename, rows) {
     if (!window.XLSX) {

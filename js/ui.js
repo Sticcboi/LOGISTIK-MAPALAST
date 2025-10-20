@@ -1107,18 +1107,30 @@ export function addToCart(alatId, selectedUnitsOrUnitId = []) {
     }
 
     // For cumulative items, proceed as normal (keyed by jenis alat id)
-    if (!state.peminjamanCart[alatId]) {
-        state.peminjamanCart[alatId] = {
-            data: alat,
-            jumlah: 1,
-            isIndividual: false
-        };
-    } else if (state.peminjamanCart[alatId].jumlah < alat.stok) {
-        state.peminjamanCart[alatId].jumlah++;
-    } else {
-        showToast('Jumlah maksimal stok tercapai', 'error');
+    const container = document.getElementById('peminjaman-alat-list');
+    const inputEl = container?.querySelector(`input.input-jumlah[data-alat-id="${alatId}"]`);
+    
+    let quantityToAdd = 1;
+    if (inputEl) {
+        quantityToAdd = parseInt(inputEl.value, 10);
+    }
+
+    if (isNaN(quantityToAdd) || quantityToAdd <= 0) {
+        showToast('Jumlah tidak valid.', 'error');
         return;
     }
+
+    if (quantityToAdd > (alat.stok || 0)) {
+        showToast('Jumlah melebihi stok yang tersedia.', 'error');
+        return;
+    }
+
+    // Jika item baru atau sudah ada, set jumlahnya sesuai input
+    state.peminjamanCart[alatId] = {
+        data: alat,
+        jumlah: quantityToAdd,
+        isIndividual: false
+    };
 
     renderCart();
     showToast('Berhasil ditambahkan ke keranjang', 'success');
