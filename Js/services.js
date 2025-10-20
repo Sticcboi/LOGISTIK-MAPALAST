@@ -1,3 +1,38 @@
+
+// js/services.js
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+import { getFirestore, collection, onSnapshot, addDoc, doc, updateDoc, serverTimestamp, query, orderBy, writeBatch, getDoc, runTransaction, increment, getDocs, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { firebaseConfig } from '../firebase-config.js';
+
+// --- INITIALIZATION ---
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+// --- COLLECTION REFERENCES ---
+const getCollectionPath = (name) => `/artifacts/${firebaseConfig.appId}/public/data/${name}`;
+const alatCollection = collection(db, getCollectionPath('alat')); // Ini sekarang "Jenis Alat"
+const unitAlatCollection = collection(db, getCollectionPath('unitAlat')); // KOLEKSI BARU untuk item individual
+const peminjamanCollection = collection(db, getCollectionPath('peminjaman'));
+const afkirCollection = collection(db, getCollectionPath('afkir'));
+const latihanCollection = collection(db, getCollectionPath('latihan'));
+
+// --- AUTHENTICATION ---
+export const listenToAuthChanges = (callback) => onAuthStateChanged(auth, callback);
+export const loginUser = (email, password) => signInWithEmailAndPassword(auth, email, password);
+export const logoutUser = () => signOut(auth);
+
+// --- FIRESTORE READS ---
+export const getUserProfile = (uid) => getDoc(doc(db, "users", uid));
+export const getPeminjamanDoc = (id) => getDoc(doc(peminjamanCollection, id));
+export const getUnitDoc = (unitId) => getDoc(doc(unitAlatCollection, unitId));
+
+const listenToCollection = (coll, orderByField, direction = "desc", callback) => {
+    const q = query(coll, orderBy(orderByField, direction));
+    return onSnapshot(q, callback, (error) => console.error(`Error listening to ${coll.path}:`, error));
+};
 // Proses afkir unit individu
 export async function processAfkirUnit(unitId, alasan) {
     const unitRef = doc(unitAlatCollection, unitId);
@@ -52,41 +87,6 @@ export async function processAfkirUnit(unitId, alasan) {
         return true;
     });
 }
-// js/services.js
-
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-import { getFirestore, collection, onSnapshot, addDoc, doc, updateDoc, serverTimestamp, query, orderBy, writeBatch, getDoc, runTransaction, increment, getDocs, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-import { firebaseConfig } from '../firebase-config.js';
-
-// --- INITIALIZATION ---
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-
-// --- COLLECTION REFERENCES ---
-const getCollectionPath = (name) => `/artifacts/${firebaseConfig.appId}/public/data/${name}`;
-const alatCollection = collection(db, getCollectionPath('alat')); // Ini sekarang "Jenis Alat"
-const unitAlatCollection = collection(db, getCollectionPath('unitAlat')); // KOLEKSI BARU untuk item individual
-const peminjamanCollection = collection(db, getCollectionPath('peminjaman'));
-const afkirCollection = collection(db, getCollectionPath('afkir'));
-const latihanCollection = collection(db, getCollectionPath('latihan'));
-
-// --- AUTHENTICATION ---
-export const listenToAuthChanges = (callback) => onAuthStateChanged(auth, callback);
-export const loginUser = (email, password) => signInWithEmailAndPassword(auth, email, password);
-export const logoutUser = () => signOut(auth);
-
-// --- FIRESTORE READS ---
-export const getUserProfile = (uid) => getDoc(doc(db, "users", uid));
-export const getPeminjamanDoc = (id) => getDoc(doc(peminjamanCollection, id));
-export const getUnitDoc = (unitId) => getDoc(doc(unitAlatCollection, unitId));
-
-const listenToCollection = (coll, orderByField, direction = "desc", callback) => {
-    const q = query(coll, orderBy(orderByField, direction));
-    return onSnapshot(q, callback, (error) => console.error(`Error listening to ${coll.path}:`, error));
-};
-
 export const listenToAlat = (callback) => listenToCollection(alatCollection, "nama", "asc", callback);
 export const listenToUnitAlat = (callback) => {
     const q = query(unitAlatCollection, where("status", "!=", "DiAfkir"));
