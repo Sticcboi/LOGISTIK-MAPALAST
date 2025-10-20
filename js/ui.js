@@ -139,15 +139,15 @@ export function hideLoading() {
 
 // Floating public link for logged-out users
 export function ensurePublicKegiatanLinkVisible(isLoggedIn) {
-    let btn = document.getElementById('floating-public-latihan');
+    let btn = document.getElementById('floating-public-kegiatan');
     if (isLoggedIn) {
         if (btn) btn.remove();
         return;
     }
     if (!btn) {
         btn = document.createElement('a');
-        btn.id = 'floating-public-latihan';
-        btn.href = 'public-latihan.html';
+        btn.id = 'floating-public-kegiatan';
+        btn.href = 'public-kegiatan.html';
         btn.className = 'fixed bottom-6 right-6 z-40 bg-blue-600 text-white px-4 py-2 rounded shadow-lg hover:bg-blue-700';
         btn.textContent = 'Catat Kegiatan';
         document.body.appendChild(btn);

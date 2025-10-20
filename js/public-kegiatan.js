@@ -1,6 +1,6 @@
-import { state } from '.state.js';
-import * as services from '.services.js';
-import * as ui from '.ui.js';
+import { state } from './state.js';
+import * as services from './services.js';
+import * as ui from './ui.js';
 
 const $ = (s) => document.querySelector(s);
 
