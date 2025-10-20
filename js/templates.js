@@ -317,23 +317,23 @@ export function getModalContainerHTML() {
     `;
 }
 
+
 export function getKegiatanViewHTML() {
     return `
     <div class="flex justify-between items-start mb-4">
         <div>
             <h2 class="text-2xl font-bold">Catatan Kegiatan</h2>
             <p class="text-gray-500">Daftar catatan penggunaan alat untuk latihan.</p>
+            
+            <div class="text-sm text-gray-600 mt-2">Total Catatan: <span id="stat-total-latihan" class="font-semibold">0</span></div>
         </div>
         
-        <div class="flex items-center gap-4">
-            <div class="text-right">
-                <div class="text-sm text-gray-600">Total Catatan: <span id="stat-total-latihan" class="font-semibold">0</span></div>
-            </div>
-            <button type="button" id="btn-backup-kegiatan" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm">
-                Backup & Hapus
+        <div class="flex space-x-2">
+            <button type="button" id="btn-backup-kegiatan" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                Backup & Hapus History
             </button>
         </div>
-        </div>
+    </div>
     <div id="latihan-list" class="space-y-3">
         <p class="text-gray-500">Memuat data latihan...</p>
     </div>`;
