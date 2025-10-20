@@ -469,15 +469,15 @@ export const getUnitHistoryOnce = async (unitId) => {
 };
 
 // --- TRAINING FUNCTIONS ---
-export const listenToLatihan = (callback) => listenToCollection(latihanCollection, "tanggalLatihan", "desc", callback);
+export const listenToKegiatan = (callback) => listenToCollection(latihanCollection, "tanggalKegiatan", "desc", callback);
 
 // Client-side transactional fallback for recording latihan + applying stock/status changes.
 // This allows the web app to work without deploying Cloud Functions. It will create the
 // latihan document and, inside a transaction, verify & update unit/alat documents and
 // append simple history entries. NOTE: for production you may prefer server-side
 // processing (Cloud Functions) for stronger security.
-export const recordLatihan = async (latihanData) => {
-    // Latihan usage does NOT affect alat stock or unit status.
+export const recordKegiatan = async (latihanData) => {
+    // Kegiatan usage does NOT affect alat stock or unit status.
     // Only record the latihan event and append history if needed.
     return runTransaction(db, async (transaction) => {
         const latihanRef = doc(latihanCollection);
@@ -529,4 +529,4 @@ export const recordLatihan = async (latihanData) => {
     });
 };
 
-export const getLatihanDoc = (id) => getDoc(doc(latihanCollection, id));
+export const getKegiatanDoc = (id) => getDoc(doc(latihanCollection, id));

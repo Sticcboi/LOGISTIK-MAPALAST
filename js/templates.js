@@ -1,7 +1,7 @@
 // js/templates.js
 
 export function getLoginScreenHTML() {
-    return `<div class="flex items-center justify-center min-h-screen bg-gray-100"><div class="w-full max-w-md p-8 space-y-6 bg-white rounded-xl shadow-lg login-card"><div class="text-center"><h1 class="text-3xl font-bold text-gray-800">Login Logistik</h1><p class="text-gray-500">Sistem Logistik Mapalast</p></div><div class="text-sm text-center mt-2"><a href="/public-training.html" class="text-blue-600 hover:underline">Anggota? Catat Penggunaan Latihan di sini</a></div><form id="login-form" class="space-y-4" novalidate><div><label for="email" class="text-sm font-medium text-gray-700">Email</label><input id="email" name="email" type="email" autocomplete="email" required class="w-full p-3 mt-1 border rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="admin@mapala.com"></div><div><label for="password" class="text-sm font-medium text-gray-700">Password</label><input id="password" name="password" type="password" autocomplete="current-password" required class="w-full p-3 mt-1 border rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="••••••••"></div><div id="login-error" class="text-red-500 text-sm text-center min-h-[1.25rem]"></div><div><button type="submit" class="w-full px-4 py-3 font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none">Masuk</button></div></form></div></div>`;
+    return `<div class="flex items-center justify-center min-h-screen bg-gray-100"><div class="w-full max-w-md p-8 space-y-6 bg-white rounded-xl shadow-lg login-card"><div class="text-center"><h1 class="text-3xl font-bold text-gray-800">Login Logistik</h1><p class="text-gray-500">Sistem Logistik Mapalast</p></div><div class="text-sm text-center mt-2"><a href="public-latihan.html" class="text-blue-600 hover:underline">Anggota? Catat Penggunaan Kegiatan di sini</a></div><form id="login-form" class="space-y-4" novalidate><div><label for="email" class="text-sm font-medium text-gray-700">Email</label><input id="email" name="email" type="email" autocomplete="email" required class="w-full p-3 mt-1 border rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="admin@mapala.com"></div><div><label for="password" class="text-sm font-medium text-gray-700">Password</label><input id="password" name="password" type="password" autocomplete="current-password" required class="w-full p-3 mt-1 border rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="••••••••"></div><div id="login-error" class="text-red-500 text-sm text-center min-h-[1.25rem]"></div><div><button type="submit" class="w-full px-4 py-3 font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none">Masuk</button></div></form></div></div>`;
 }
 
 export function getDashboardHTML(user, firestoreUser) {
@@ -16,7 +16,7 @@ export function getDashboardHTML(user, firestoreUser) {
             <span class="text-sm font-bold text-gray-700 hidden sm:block">${displayName}</span>
             <button type="button" id="btn-logout" class="text-sm font-medium text-red-600 hover:text-red-800">Logout</button>
         </div>
-    </div></div></header><main class="container mx-auto p-4 sm:p-6 lg:p-8"><div class="border-b border-gray-200 mb-6"><nav class="-mb-px flex space-x-6 overflow-x-auto" aria-label="Tabs"><button type="button" id="nav-dashboard" class="tab-link-active whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm">Dasbor</button><button type="button" id="nav-inventaris" class="tab-link text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm">Inventaris</button><button type="button" id="nav-peminjaman" class="tab-link text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm">Peminjaman</button><button type="button" id="nav-latihan" class="tab-link text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm">Latihan</button><button type="button" id="nav-afkir" class="tab-link text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm">Barang Afkir</button></nav></div><div id="view-dashboard" class="page-view"></div><div id="view-inventaris" class="page-view hidden"></div><div id="view-peminjaman" class="page-view hidden"></div><div id="view-latihan" class="page-view hidden"></div><div id="view-afkir" class="page-view hidden"></div></main><div id="modal-container"></div>`;
+    </div></div></header><main class="container mx-auto p-4 sm:p-6 lg:p-8"><div class="border-b border-gray-200 mb-6"><nav class="-mb-px flex space-x-6 overflow-x-auto" aria-label="Tabs"><button type="button" id="nav-dashboard" class="tab-link-active whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm">Dasbor</button><button type="button" id="nav-inventaris" class="tab-link text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm">Inventaris</button><button type="button" id="nav-peminjaman" class="tab-link text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm">Peminjaman</button><button type="button" id="nav-latihan" class="tab-link text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm">Kegiatan</button><button type="button" id="nav-afkir" class="tab-link text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm">Barang Afkir</button></nav></div><div id="view-dashboard" class="page-view"></div><div id="view-inventaris" class="page-view hidden"></div><div id="view-peminjaman" class="page-view hidden"></div><div id="view-latihan" class="page-view hidden"></div><div id="view-afkir" class="page-view hidden"></div></main><div id="modal-container"></div>`;
 }
 
 export function getDashboardViewHTML() {
@@ -317,11 +317,11 @@ export function getModalContainerHTML() {
     `;
 }
 
-export function getLatihanViewHTML() {
+export function getKegiatanViewHTML() {
     return `
     <div class="flex justify-between items-start mb-4">
         <div>
-            <h2 class="text-2xl font-bold">Catatan Latihan</h2>
+            <h2 class="text-2xl font-bold">Catatan Kegiatan</h2>
             <p class="text-gray-500">Daftar catatan penggunaan alat untuk latihan.</p>
         </div>
         <div class="text-right">
@@ -333,7 +333,7 @@ export function getLatihanViewHTML() {
     </div>`;
 }
 
-export function getLatihanDetailModalHTML(latihan) {
+export function getKegiatanDetailModalHTML(latihan) {
     const itemsHtml = (latihan.items || []).map(it => {
         if (it.isIndividual) return `<li>${it.namaAlat} • ${it.kodeInv || it.unitId || '-'} (unit)</li>`;
         return `<li>${it.namaAlat} • x${it.jumlah || 0}</li>`;
@@ -343,10 +343,10 @@ export function getLatihanDetailModalHTML(latihan) {
     <div id="modal-latihan-detail" class="modal fixed inset-0 z-50 flex items-center justify-center">
         <div class="fixed inset-0 bg-black bg-opacity-50"></div>
         <div class="bg-white rounded-lg shadow-xl w-full max-w-lg m-4 p-6 relative z-10">
-            <h3 class="text-xl font-bold mb-2">Detail Catatan Latihan</h3>
-            <p class="text-sm text-gray-600 mb-4">Nama: ${latihan.namaPengguna || '-' } • Kegiatan: ${latihan.kegiatan || '-'}</p>
+            <h3 class="text-xl font-bold mb-2">Detail Catatan Kegiatan</h3>
+            <p class="text-sm text-gray-600 mb-4">Nama: ${latihan.namaPengguna || '-' } • Kegiatan: ${latihan.latihan || '-'}</p>
             <div class="text-sm text-gray-700 mb-4">
-                <strong>Tanggal:</strong> ${latihan.tanggalLatihan || latihan.timestamp?.toDate?.().toLocaleString?.('id-ID') || '-'}
+                <strong>Tanggal:</strong> ${latihan.tanggalKegiatan || latihan.timestamp?.toDate?.().toLocaleString?.('id-ID') || '-'}
             </div>
             <div class="mb-4"><strong>Items:</strong><ul class="list-disc list-inside text-sm text-gray-600">${itemsHtml}</ul></div>
             <div class="flex justify-end"><button id="btn-close-latihan-detail" class="px-4 py-2 bg-gray-200 rounded">Tutup</button></div>

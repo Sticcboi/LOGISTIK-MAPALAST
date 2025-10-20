@@ -1,6 +1,6 @@
-import { state } from './state.js';
-import * as services from './services.js';
-import * as ui from './ui.js';
+import { state } from '.state.js';
+import * as services from '.services.js';
+import * as ui from '.ui.js';
 
 const $ = (s) => document.querySelector(s);
 
@@ -348,8 +348,8 @@ function handleRemove(event) {
 async function handleSubmit(e) {
   e.preventDefault();
   const nama = $('#latihan-nama').value.trim();
-  const kegiatan = $('#latihan-kegiatan').value.trim();
-  if (!nama || !kegiatan) return showMessage('Nama dan kegiatan harus diisi', 'error');
+  const latihan = $('#latihan-latihan').value.trim();
+  if (!nama || !latihan) return showMessage('Nama dan latihan harus diisi', 'error');
 
   const items = [];
   Object.values(state.latihanCart || {}).forEach(entry => {
@@ -378,15 +378,15 @@ async function handleSubmit(e) {
 
   const payload = {
     namaPengguna: nama,
-    kegiatan: kegiatan,
-    tanggalLatihan: new Date().toISOString(),
-    status: 'Latihan',
+    latihan: latihan,
+    tanggalKegiatan: new Date().toISOString(),
+    status: 'Kegiatan',
     items
   };
 
   try {
   ui.showLoading('Menyimpan catatan latihan...');
-  await services.recordLatihan(payload);
+  await services.recordKegiatan(payload);
   ui.hideLoading();
   showMessage('Catatan latihan berhasil disimpan', 'success');
   state.latihanCart = {};
@@ -435,7 +435,7 @@ services.listenToUnitAlat((snap) => {
 renderAlatList();
 renderCart();
 
-// floating public link: hide it on the dedicated public-training page
-ui.ensurePublicTrainingLinkVisible(true);
+// floating public link: hide it on the dedicated public-latihan page
+ui.ensurePublicKegiatanLinkVisible(true);
 
 export default {};

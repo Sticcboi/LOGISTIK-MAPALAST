@@ -753,9 +753,9 @@ async function handleClickEvents(e) {
     }
     if (target.classList.contains('btn-detail-peminjaman')) ui.showPeminjamanDetail(target.dataset.id);
 
-    // Latihan detail view (admin)
+    // Kegiatan detail view (admin)
     if (target.classList.contains('btn-view-latihan')) {
-        ui.showLatihanDetail(target.dataset.id);
+        ui.showKegiatanDetail(target.dataset.id);
     }
 
     // Replace the existing btn-add-to-cart handling with this simpler version
@@ -973,16 +973,16 @@ function startDataListeners() {
         }
     });
 
-    // Latihan listener (admin view)
-    const unsubLatihan = services.listenToLatihan(snapshot => {
-        state.allLatihan = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    // Kegiatan listener (admin view)
+    const unsubKegiatan = services.listenToKegiatan(snapshot => {
+        state.allKegiatan = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         if (state.user) {
-            ui.updateTrainingStats();
-            ui.renderLatihanList();
+            ui.updateKegiatanStats();
+            ui.renderKegiatanList();
         }
     });
 
-    state.unsubscribeListeners.push(unsubLatihan);
+    state.unsubscribeListeners.push(unsubKegiatan);
 
     state.unsubscribeListeners.push(unsubAlat, unsubUnitAlat, unsubPeminjaman, unsubAfkir);
 }

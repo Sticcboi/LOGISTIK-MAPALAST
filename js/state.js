@@ -20,9 +20,9 @@ export const state = {
     },
     unsubscribeListeners: [],
     peminjamanCart: {},  // {alatId: {data: AlatData, jumlah: number}}
-    // Latihan (public/member) cart & list
+    // Kegiatan (public/member) cart & list
     latihanCart: {}, // { jenisAlatId: { data: AlatData, jumlah: number, units: [{unitId,kodeInv}]} }
-    allLatihan: [], // latest recorded latihan documents (optional)
+    allKegiatan: [], // latest recorded latihan documents (optional)
 };
 
 export function resetState() {
@@ -34,7 +34,7 @@ export function resetState() {
     state.allAfkir = [];
     state.peminjamanCart = {};
     state.latihanCart = {};
-    state.allLatihan = [];
+    state.allKegiatan = [];
     state.unsubscribeListeners.forEach(unsub => unsub());
     state.unsubscribeListeners = [];
 }

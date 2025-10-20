@@ -138,18 +138,18 @@ export function hideLoading() {
 }
 
 // Floating public link for logged-out users
-export function ensurePublicTrainingLinkVisible(isLoggedIn) {
-    let btn = document.getElementById('floating-public-training');
+export function ensurePublicKegiatanLinkVisible(isLoggedIn) {
+    let btn = document.getElementById('floating-public-latihan');
     if (isLoggedIn) {
         if (btn) btn.remove();
         return;
     }
     if (!btn) {
         btn = document.createElement('a');
-        btn.id = 'floating-public-training';
-        btn.href = '/public-training.html';
+        btn.id = 'floating-public-latihan';
+        btn.href = 'public-latihan.html';
         btn.className = 'fixed bottom-6 right-6 z-40 bg-blue-600 text-white px-4 py-2 rounded shadow-lg hover:bg-blue-700';
-        btn.textContent = 'Catat Latihan';
+        btn.textContent = 'Catat Kegiatan';
         document.body.appendChild(btn);
     }
 }
@@ -225,7 +225,7 @@ export function renderDashboard() {
     document.getElementById('view-dashboard').innerHTML = templates.getDashboardViewHTML();
     document.getElementById('view-inventaris').innerHTML = templates.getInventarisViewHTML();
     document.getElementById('view-peminjaman').innerHTML = templates.getPeminjamanViewHTML();
-    document.getElementById('view-latihan').innerHTML = templates.getLatihanViewHTML();
+    document.getElementById('view-latihan').innerHTML = templates.getKegiatanViewHTML();
     document.getElementById('view-afkir').innerHTML = templates.getAfkirViewHTML();
     document.getElementById('modal-container').innerHTML = templates.getModalContainerHTML();
 }
@@ -347,31 +347,31 @@ export function updateDashboardStats() {
 }
 
 // --- LATIHAN: render & helpers ---
-export function updateTrainingStats() {
-    const total = (state.allLatihan || []).length;
+export function updateKegiatanStats() {
+    const total = (state.allKegiatan || []).length;
     const el = document.getElementById('stat-total-latihan');
     if (el) el.textContent = total;
 }
 
-export function renderLatihanList() {
+export function renderKegiatanList() {
     const container = document.getElementById('latihan-list');
     if (!container) return;
-    if ((state.allLatihan || []).length === 0) {
+    if ((state.allKegiatan || []).length === 0) {
         container.innerHTML = `<p class="text-center text-gray-500 py-8">Belum ada catatan latihan.</p>`;
         return;
     }
 
-    container.innerHTML = (state.allLatihan || []).map(doc => {
-        const t = doc.tanggalLatihan ? (doc.tanggalLatihan.toDate ? doc.tanggalLatihan.toDate().toLocaleString('id-ID') : String(doc.tanggalLatihan)) : (doc.timestamp ? (doc.timestamp.toDate ? doc.timestamp.toDate().toLocaleString('id-ID') : '-') : '-');
+    container.innerHTML = (state.allKegiatan || []).map(doc => {
+        const t = doc.tanggalKegiatan ? (doc.tanggalKegiatan.toDate ? doc.tanggalKegiatan.toDate().toLocaleString('id-ID') : String(doc.tanggalKegiatan)) : (doc.timestamp ? (doc.timestamp.toDate ? doc.timestamp.toDate().toLocaleString('id-ID') : '-') : '-');
         const totalItems = (doc.items || []).length;
-        return `<div class="bg-white p-4 rounded-lg shadow-sm flex justify-between items-center"><div><div class="font-semibold">${doc.namaPengguna || '-'} • ${doc.kegiatan || '-'}</div><div class="text-sm text-gray-500">${t} • ${totalItems} item</div></div><div class="flex gap-2"><button data-id="${doc.id}" class="btn-view-latihan text-sm px-3 py-1 bg-blue-50 text-blue-700 rounded">Detail</button></div></div>`;
+        return `<div class="bg-white p-4 rounded-lg shadow-sm flex justify-between items-center"><div><div class="font-semibold">${doc.namaPengguna || '-'} • ${doc.latihan || '-'}</div><div class="text-sm text-gray-500">${t} • ${totalItems} item</div></div><div class="flex gap-2"><button data-id="${doc.id}" class="btn-view-latihan text-sm px-3 py-1 bg-blue-50 text-blue-700 rounded">Detail</button></div></div>`;
     }).join('');
 }
 
-export function showLatihanDetail(latihanId) {
-    const latihan = (state.allLatihan || []).find(l => l.id === latihanId);
+export function showKegiatanDetail(latihanId) {
+    const latihan = (state.allKegiatan || []).find(l => l.id === latihanId);
     if (!latihan) return;
-    const html = templates.getLatihanDetailModalHTML(latihan);
+    const html = templates.getKegiatanDetailModalHTML(latihan);
     // Remove existing modal if any
     const existing = document.getElementById('modal-latihan-detail');
     if (existing) existing.remove();
