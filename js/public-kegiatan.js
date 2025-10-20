@@ -435,7 +435,7 @@ services.listenToUnitAlat((snap) => {
 renderAlatList();
 renderCart();
 
-// floating public link: hide it on the dedicated public-latihan page
+// floating public link: hide it on the dedicated public-kegiatan page
 ui.ensurePublicKegiatanLinkVisible(true);
 
 export default {};
