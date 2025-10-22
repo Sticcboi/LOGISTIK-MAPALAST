@@ -446,15 +446,14 @@ function validateAlatForm(data, isIndividual) {
         return false;
     }
     if (isIndividual) {
-        const jumlahUnit = parseInt(document.getElementById('alat-jumlah-unit').value, 10);
-        if (isNaN(jumlahUnit) || jumlahUnit <= 0) {
+        if (isNaN(data.jumlahUnit) || data.jumlahUnit <= 0) { // <-- GUNAKAN data.jumlahUnit
             ui.showToast('Jumlah unit harus lebih dari 0.', 'error');
             return false;
-        }
-    } else {
-        if (isNaN(data.stok) || data.stok < 0) {
-            ui.showToast('Jumlah stok tidak boleh negatif.', 'error');
-            return false;
+        } else {
+            if (isNaN(data.stok) || data.stok < 0) {
+                ui.showToast('Jumlah stok tidak boleh negatif.', 'error');
+                return false;
+            }
         }
     }
     // Tambahan validasi kategori
@@ -548,6 +547,7 @@ async function handleAlatFormSubmit(e) {
 
     if (isIndividual) {
         alatData.stok = 0;
+        alatData.jumlahUnit = parseInt(form.querySelector('#alat-jumlah-unit').value, 10);
     } else {
         alatData.stok = parseInt(form.querySelector('#alat-stok').value, 10);
     }
