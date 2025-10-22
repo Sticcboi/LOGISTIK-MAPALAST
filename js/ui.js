@@ -560,7 +560,7 @@ export function renderAlatList(searchTerm = '') {
         
         container.innerHTML = `
             <div class="col-span-full text-center text-gray-500 py-8">
-                <p class="text-lg font-semibold mb-2">Tidak ada alat untuk dipinjam</p>
+                <p class="text-lg font-semibold mb-2"> Belum ada alat yang didata</p>
                 <div class="text-sm text-gray-400 space-y-1">
                     <p>Kategori aktif: <strong>${state.currentAlatCategory}</strong></p>
                     <p>Total alat: ${totalAlat}</p>
