@@ -573,7 +573,10 @@ async function handleAlatFormSubmit(e) {
         }
     }
 
-    if (!validateAlatForm(alatData, isIndividual)) return;
+    if (!validateAlatForm(alatData, isIndividual)) {
+        handleAlatFormSubmit.isSubmitting = false;
+        return;
+    }
 
     ui.setButtonLoading(submitButton, true);
     try {
