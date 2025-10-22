@@ -1,7 +1,7 @@
 // js/main.js
-import { state, resetState } from 'js/state.js';
-import * as services from 'js/services.js';
-import * as ui from 'js/ui.js';
+import { state, resetState } from './state.js';
+import * as services from './services.js';
+import * as ui from './ui.js';
 
 // --- AWAL TAMBAHAN KODE: IDLE TIMER ---
 let idleTimer = null;
