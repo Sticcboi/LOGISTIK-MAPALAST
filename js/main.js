@@ -759,8 +759,6 @@ async function handleAfkirFormSubmit(e) {
 
     ui.setButtonLoading(submitButton, true);
     try {
-        // Backup history afkir sebelum hapus
-        exportAfkirHistoryToCSV();
         await services.processAfkir(id, jumlahToAfkir, alasan);
         ui.showToast(`Berhasil meng-afkirkan ${jumlahToAfkir} item.`, 'success');
         ui.toggleModal('modal-afkir-alat', false);
