@@ -2,7 +2,7 @@
 // js/services.js
 //js
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut, setPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 import { getFirestore, collection, onSnapshot, addDoc, doc, updateDoc, serverTimestamp, query, orderBy, writeBatch, getDoc, runTransaction, increment, getDocs, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { firebaseConfig } from '../firebase-config.js';
 
@@ -21,7 +21,14 @@ const latihanCollection = collection(db, getCollectionPath('latihan'));
 
 // --- AUTHENTICATION ---
 export const listenToAuthChanges = (callback) => onAuthStateChanged(auth, callback);
-export const loginUser = (email, password) => signInWithEmailAndPassword(auth, email, password);
+export const loginUser = (email, password) => {
+    // Mengatur agar login hanya bertahan selama tab ini terbuka
+    return setPersistence(auth, browserSessionPersistence)
+        .then(() => {
+            // Setelah persistensi diatur, lanjutkan login
+            return signInWithEmailAndPassword(auth, email, password);
+        });
+};
 export const logoutUser = () => signOut(auth);
 
 // --- FIRESTORE READS ---
