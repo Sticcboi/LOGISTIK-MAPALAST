@@ -189,7 +189,7 @@ export function getModalContainerHTML() {
                         <input type="checkbox" id="alat-is-individual" class="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
                         <span class="text-gray-700">Lacak per unit (dengan Kode INV)?</span>
                     </label>
-                    <p class="text-xs text-gray-500 mt-1 ml-8">Untuk alat penting seperti Tali, Harness, atau Tenda.</p>
+                    <p class="text-xs text-gray-500 mt-1 ml-8">Untuk alat penting seperti alat metal atau alat yang berjumlah banyak.</p>
                 </div>
                 
                 <div class="mt-4 grid grid-cols-1 gap-y-4 gap-x-4 sm:grid-cols-2">
