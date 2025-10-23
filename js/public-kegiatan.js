@@ -122,7 +122,9 @@ function renderAlatList() {
         
         merkItems.forEach(item => {
           const units = (state.unitAlat || [])
-            .filter(u => u.jenisAlatId === item.id && u.status === 'Tersedia');
+            .filter(u => u.jenisAlatId === item.id && u.status === 'Tersedia')
+            .sort((a, b) => (a.kodeInv || '').localeCompare(b.kodeInv || ''));
+            
             
           units.forEach(unit => {
             const unitRow = document.createElement('div');
