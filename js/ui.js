@@ -882,7 +882,7 @@ export function openEditAlatModal(alatId) {
     form.querySelector('#alat-keterangan').value = alat.keterangan || '';
     form.querySelector('#alat-nama').readOnly = true;
     form.querySelector('#alat-kategori').disabled = true;
-    form.querySelector('#alat-tahun').readOnly = true;
+    form.querySelector('#alat-tahun').readOnly = alat.isIndividual;
     const checkbox = document.getElementById('alat-is-individual');
     checkbox.disabled = true;
     checkbox.parentElement.classList.add('opacity-50', 'cursor-not-allowed');
