@@ -525,14 +525,25 @@ export function renderAlatList(searchTerm = '') {
                 // tampilkan kumulatif hanya jika stok > 0
                 return (alat.stok && alat.stok > 0);
             }
+
+            // --- LOGIKA BARU ---
+            // 1. Ambil SEMUA unit yang terkait dengan jenis alat ini
+            const units = (state.unitAlat || []).filter(u => u.jenisAlatId === alat.id);
+
+            // 2. Jika total unitnya 0, SELALU sembunyikan, tidak peduli apa kata kuncinya.
+            if (units.length === 0) {
+                return false;
+            }
+            // --- AKHIR LOGIKA BARU ---
+
             // Jika ada kata pencarian yang cocok dengan nama atau merk jenis alat,
-            // tampilkan jenis alat ini walaupun tidak ada unit "Tersedia".
+            // tampilkan (karena kita tahu total unitnya > 0)
             if (lowerSearchTerm && (alat.nama.toLowerCase().includes(lowerSearchTerm) || (alat.merk && alat.merk.toLowerCase().includes(lowerSearchTerm)))) {
                 return true;
             }
-            // Untuk individual, tampilkan jika ada unit tersedia
+
+            // Untuk individual (tanpa search), tampilkan jika ada unit tersedia
             // atau jika pencarian cocok dengan salah satu kodeInv unit
-            const units = (state.unitAlat || []).filter(u => u.jenisAlatId === alat.id);
             const hasAvailableUnit = units.some(u => u.status === 'Tersedia');
             const hasMatchingKode = lowerSearchTerm && units.some(u => u.kodeInv && u.kodeInv.toLowerCase().includes(lowerSearchTerm));
             return hasAvailableUnit || hasMatchingKode;
