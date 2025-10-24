@@ -59,9 +59,10 @@ function stopIdleTimer() {
 
 // --- FUNGSI HELPER ---
 // GANTI FUNGSI LAMA DENGAN FUNGSI BARU INI
+// GANTI FUNGSI LAMA DENGAN FUNGSI BARU INI
 function generateKodeINV(namaAlat, merk, tahun, index = 0) {
     
-    // --- Bagian 1: Buat Prefix NAMA (Sama seperti sebelumnya) ---
+    // --- Bagian 1 & 2: Buat Prefix & Suffix (Sama) ---
     const words = namaAlat.trim().split(/\s+/);
     let prefix = '';
     
@@ -74,55 +75,69 @@ function generateKodeINV(namaAlat, merk, tahun, index = 0) {
     }
     prefix = prefix.substring(0, 3).padEnd(3, 'X');
 
-    // --- Bagian 2: Buat Suffix TAHUN (Sama seperti sebelumnya) ---
     const tahunSuffix = String(tahun).slice(-2);
 
-    // --- Bagian 3: Normalisasi Merk (BARU) ---
-    // Samakan logika dengan ui.js, jika merk kosong anggap "Tanpa Merk"
+    // --- Bagian 3: Normalisasi Merk (Sama) ---
     const targetMerk = (merk || 'Tanpa Merk').trim();
 
     // --- Bagian 4: Cari Nomor Urut (LOGIKA DIUBAH) ---
+    
+    // 4a. Cek nomor yang sedang dipakai (state.unitAlat)
     const existingNumbers = (state.unitAlat || [])
         .filter(u => {
             if (!u.kodeInv) return false;
             const parts = u.kodeInv.split('-');
             
-            // Cek format, prefix, dan tahun (Sama seperti sebelumnya)
             if (parts.length !== 3 || parts[0] !== prefix || parts[1] !== tahunSuffix) {
                 return false; 
             }
-
-            // --- INI LOGIKA BARUNYA: Cek Merk ---
-            // 1. Cari "Jenis Alat" (parent) dari unit 'u' yang sedang dicek
+            // Cek merk unit yang ada
             const jenisAlat = (state.allAlat || []).find(a => a.id === u.jenisAlatId);
-            // 2. Dapatkan merk dari "Jenis Alat" tersebut
             const unitMerk = (jenisAlat ? jenisAlat.merk : null) || 'Tanpa Merk';
             
-            // 3. Hanya hitung jika merk-nya SAMA dengan merk alat baru
             return unitMerk.trim() === targetMerk;
         })
         .map(u => {
             const parts = u.kodeInv.split('-');
-            const num = parseInt(parts[2], 10); // Ambil nomor urut (bagian ke-3)
+            const num = parseInt(parts[2], 10); 
             return isNaN(num) ? 0 : num;
         });
 
-    // --- Bagian 5 & 6 (Cari nomor & kembalikan) tetap sama ---
-    const usedNumbers = new Set(existingNumbers);
+    // 4b. (BARU) Cek nomor yang sudah diafkir (state.allAfkir)
+    const afkirNumbers = (state.allAfkir || [])
+        .filter(afkirDoc => {
+            // Hanya cek afkir individual yang punya kodeInv
+            if (afkirDoc.tipeAfkir !== 'individual' || !afkirDoc.kodeInv) return false;
+
+            const parts = afkirDoc.kodeInv.split('-');
+            if (parts.length !== 3 || parts[0] !== prefix || parts[1] !== tahunSuffix) return false;
+
+            // Cek merk di dokumen afkir
+            const afkirMerk = (afkirDoc.merk || 'Tanpa Merk').trim();
+            return afkirMerk === targetMerk;
+        })
+        .map(afkirDoc => {
+            const parts = afkirDoc.kodeInv.split('-');
+            const num = parseInt(parts[2], 10);
+            return isNaN(num) ? 0 : num;
+        });
+
+    // --- Bagian 5: Gabungkan semua nomor yang pernah dipakai ---
+    const usedNumbers = new Set([...existingNumbers, ...afkirNumbers]); // <-- GABUNGKAN KEDUANYA
     
     let nextNumber = 1;
     let resultNumber = 0;
     let found = 0;
     while (found <= index) {
         while (usedNumbers.has(nextNumber)) {
-            nextNumber++;
+            nextNumber++; // <-- Ini akan melompati 0006 jika ditemukan di daftar afkir
         }
         resultNumber = nextNumber;
         nextNumber++;
         found++;
     }
 
-    // Formatnya tetap 3-bagian
+    // --- Bagian 6: Kembalikan format 3-bagian ---
     return `${prefix}-${tahunSuffix}-${resultNumber.toString().padStart(4, '0')}`;
 }
 // --- TAMBAHKAN FUNGSI BARU INI ---
