@@ -58,46 +58,55 @@ function stopIdleTimer() {
 }
 
 // --- FUNGSI HELPER ---
-function generateKodeINV(namaAlat, tahun, index = 0) {
-    // Sistem kode yang lebih cerdas untuk menghindari konflik
-    // Memastikan setiap alat baru akan selalu urut berdasarkan prefix + tahun
+function generateKodeINV(namaAlat, merk, tahun, index = 0) {
+    
+    // --- Bagian 1: Buat Prefix NAMA ---
     const words = namaAlat.trim().split(/\s+/);
     let prefix = '';
     
     if (words.length === 1) {
-        // Jika satu kata, ambil 3 huruf pertama
         prefix = words[0].substring(0, 3).toUpperCase();
     } else if (words.length === 2) {
-        // Jika dua kata, ambil huruf pertama dari setiap kata + huruf kedua dari kata pertama
         prefix = (words[0].charAt(0) + words[1].charAt(0) + words[0].charAt(1)).toUpperCase();
     } else {
-        // Jika lebih dari dua kata, ambil huruf pertama dari 3 kata pertama
         prefix = words.slice(0, 3).map(word => word.charAt(0)).join('').toUpperCase();
     }
-    
-    // Pastikan prefix minimal 3 karakter dan maksimal 3 karakter
     prefix = prefix.substring(0, 3).padEnd(3, 'X');
-    
+
+    // --- Bagian 2: Buat Prefix MERK (BARU) ---
+    const merkClean = (merk || 'Tanpa Merk').trim(); //
+    const merkWords = merkClean.split(/\s+/);
+    let merkPrefix = '';
+
+    if (merkWords.length === 1) { // Contoh: "Beal" -> "BEA"
+        merkPrefix = merkWords[0].substring(0, 3).toUpperCase();
+    } else { // Contoh: "Tanpa Merk" -> "TMA"
+        merkPrefix = (merkWords[0].charAt(0) + (merkWords[1] ? merkWords[1].charAt(0) : 'X') + merkWords[0].charAt(1)).toUpperCase();
+    }
+    merkPrefix = merkPrefix.substring(0, 3).padEnd(3, 'X');
+    // ------------------------------------------
+
     const tahunSuffix = String(tahun).slice(-2);
 
-    // Ambil semua unit dengan prefix dan tahun yang sama untuk memastikan urutan
+    // --- Bagian 3: Cari Nomor Urut ---
     const existingNumbers = (state.unitAlat || [])
         .filter(u => {
             if (!u.kodeInv) return false;
             const parts = u.kodeInv.split('-');
-            return parts[0] === prefix && parts[1] === tahunSuffix;
+            // Cek format baru: NAM-MRK-TH-NUM (4 bagian)
+            return parts.length === 4 &&
+                   parts[0] === prefix &&       // Cocokkan Nama
+                   parts[1] === merkPrefix &&   // Cocokkan Merk
+                   parts[2] === tahunSuffix;    // Cocokkan Tahun
         })
         .map(u => {
             const parts = u.kodeInv.split('-');
-            // Ambil nomor urut, pastikan 4 digit terakhir
-            const num = parseInt(parts[2], 10);
+            const num = parseInt(parts[3], 10); // Ambil nomor urut (bagian ke-4)
             return isNaN(num) ? 0 : num;
         });
 
-    // Cari semua nomor yang sudah dipakai
     const usedNumbers = new Set(existingNumbers);
-
-    // Cari nomor urut terkecil yang belum dipakai untuk memastikan urutan berkelanjutan
+    
     let nextNumber = 1;
     let resultNumber = 0;
     let found = 0;
@@ -110,7 +119,8 @@ function generateKodeINV(namaAlat, tahun, index = 0) {
         found++;
     }
 
-    return `${prefix}-${tahunSuffix}-${resultNumber.toString().padStart(4, '0')}`;
+    // --- Bagian 4: Kembalikan format kode BARU ---
+    return `${prefix}-${merkPrefix}-${tahunSuffix}-${resultNumber.toString().padStart(4, '0')}`;
 }
 // --- TAMBAHKAN FUNGSI BARU INI ---
 async function backupAndClearKegiatan() {
@@ -596,7 +606,7 @@ async function handleAlatFormSubmit(e) {
                 const jumlahUnit = parseInt(form.querySelector('#alat-jumlah-unit').value, 10);
                 for (let i = 0; i < jumlahUnit; i++) {
                     unitsToAdd.push({
-                        kodeInv: generateKodeINV(alatData.nama, alatData.tahunPembelian, i),
+                        kodeInv: generateKodeINV(alatData.nama, alatData.merk, alatData.tahunPembelian, i),
                         warna: alatData.warna,
                         kondisi: alatData.kondisi,
                         keterangan: alatData.keterangan
