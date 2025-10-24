@@ -560,7 +560,13 @@ async function handleAlatFormSubmit(e) {
         const conflict = (state.allAlat || []).find(a =>
             a.nama.trim().toLowerCase() === nama &&
             a.kategori === kategori &&
-            a.isIndividual !== isIndividual
+            a.isIndividual !== isIndividual &&
+            // TAMBAHAN LOGIKA:
+            // Hanya anggap konflik JIKA:
+            // 1. Alat yang ada itu TIPE INDIVIDUAL (pasti konflik)
+            // ATAU
+            // 2. Alat yang ada itu TIPE KUMULATIF dan STOKNYA MASIH ADA (> 0)
+            (a.isIndividual || (!a.isIndividual && (a.stok || 0) > 0))
         );
         if (conflict) {
             ui.showToast(
@@ -569,6 +575,7 @@ async function handleAlatFormSubmit(e) {
                     : 'Sudah ada alat dengan nama & kategori ini sebagai per unit (Kode INV). Tidak bisa menambah versi kumulatif.',
                 'error'
             );
+            handleAlatFormSubmit.isSubmitting = false;
             return;
         }
     }
