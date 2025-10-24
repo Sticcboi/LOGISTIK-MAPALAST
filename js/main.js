@@ -58,9 +58,10 @@ function stopIdleTimer() {
 }
 
 // --- FUNGSI HELPER ---
+// GANTI FUNGSI LAMA DENGAN FUNGSI BARU INI
 function generateKodeINV(namaAlat, merk, tahun, index = 0) {
     
-    // --- Bagian 1: Buat Prefix NAMA ---
+    // --- Bagian 1: Buat Prefix NAMA (Sama seperti sebelumnya) ---
     const words = namaAlat.trim().split(/\s+/);
     let prefix = '';
     
@@ -73,38 +74,40 @@ function generateKodeINV(namaAlat, merk, tahun, index = 0) {
     }
     prefix = prefix.substring(0, 3).padEnd(3, 'X');
 
-    // --- Bagian 2: Buat Prefix MERK (BARU) ---
-    const merkClean = (merk || 'Tanpa Merk').trim(); //
-    const merkWords = merkClean.split(/\s+/);
-    let merkPrefix = '';
-
-    if (merkWords.length === 1) { // Contoh: "Beal" -> "BEA"
-        merkPrefix = merkWords[0].substring(0, 3).toUpperCase();
-    } else { // Contoh: "Tanpa Merk" -> "TMA"
-        merkPrefix = (merkWords[0].charAt(0) + (merkWords[1] ? merkWords[1].charAt(0) : 'X') + merkWords[0].charAt(1)).toUpperCase();
-    }
-    merkPrefix = merkPrefix.substring(0, 3).padEnd(3, 'X');
-    // ------------------------------------------
-
+    // --- Bagian 2: Buat Suffix TAHUN (Sama seperti sebelumnya) ---
     const tahunSuffix = String(tahun).slice(-2);
 
-    // --- Bagian 3: Cari Nomor Urut ---
+    // --- Bagian 3: Normalisasi Merk (BARU) ---
+    // Samakan logika dengan ui.js, jika merk kosong anggap "Tanpa Merk"
+    const targetMerk = (merk || 'Tanpa Merk').trim();
+
+    // --- Bagian 4: Cari Nomor Urut (LOGIKA DIUBAH) ---
     const existingNumbers = (state.unitAlat || [])
         .filter(u => {
             if (!u.kodeInv) return false;
             const parts = u.kodeInv.split('-');
-            // Cek format baru: NAM-MRK-TH-NUM (4 bagian)
-            return parts.length === 4 &&
-                   parts[0] === prefix &&       // Cocokkan Nama
-                   parts[1] === merkPrefix &&   // Cocokkan Merk
-                   parts[2] === tahunSuffix;    // Cocokkan Tahun
+            
+            // Cek format, prefix, dan tahun (Sama seperti sebelumnya)
+            if (parts.length !== 3 || parts[0] !== prefix || parts[1] !== tahunSuffix) {
+                return false; 
+            }
+
+            // --- INI LOGIKA BARUNYA: Cek Merk ---
+            // 1. Cari "Jenis Alat" (parent) dari unit 'u' yang sedang dicek
+            const jenisAlat = (state.allAlat || []).find(a => a.id === u.jenisAlatId);
+            // 2. Dapatkan merk dari "Jenis Alat" tersebut
+            const unitMerk = (jenisAlat ? jenisAlat.merk : null) || 'Tanpa Merk';
+            
+            // 3. Hanya hitung jika merk-nya SAMA dengan merk alat baru
+            return unitMerk.trim() === targetMerk;
         })
         .map(u => {
             const parts = u.kodeInv.split('-');
-            const num = parseInt(parts[3], 10); // Ambil nomor urut (bagian ke-4)
+            const num = parseInt(parts[2], 10); // Ambil nomor urut (bagian ke-3)
             return isNaN(num) ? 0 : num;
         });
 
+    // --- Bagian 5 & 6 (Cari nomor & kembalikan) tetap sama ---
     const usedNumbers = new Set(existingNumbers);
     
     let nextNumber = 1;
@@ -119,8 +122,8 @@ function generateKodeINV(namaAlat, merk, tahun, index = 0) {
         found++;
     }
 
-    // --- Bagian 4: Kembalikan format kode BARU ---
-    return `${prefix}-${merkPrefix}-${tahunSuffix}-${resultNumber.toString().padStart(4, '0')}`;
+    // Formatnya tetap 3-bagian
+    return `${prefix}-${tahunSuffix}-${resultNumber.toString().padStart(4, '0')}`;
 }
 // --- TAMBAHKAN FUNGSI BARU INI ---
 async function backupAndClearKegiatan() {
