@@ -146,21 +146,57 @@ function renderAlatList() {
         merkDiv.appendChild(merkHeader);
         merkDiv.appendChild(unitList);
       } else {
-        // For cumulative items, just show merk with add button
-        const totalStok = merkItems.reduce((sum, item) => sum + (item.stok || 0), 0);
-        merkHeader.innerHTML = `
-          <div class="flex items-center justify-between w-full">
-            <div>
-              <span class="font-semibold">${merk}</span>
-              <span class="ml-2 text-xs bg-gray-100 text-gray-800 px-1.5 py-0.5 rounded">Kumulatif</span>
-            </div>
-            <div class="flex items-center">
-              <span class="text-sm text-gray-600 mr-3">Stok: ${totalStok}</span>
-              <button data-alat-id="${firstItem.id}" class="btn-add-latihan px-2 py-1 bg-green-600 text-white rounded text-sm">Tambah</button>
-            </div>
-          </div>
-        `;
-        merkDiv.appendChild(merkHeader);
+            // --- AWAL PERUBAHAN ---
+            // For cumulative items, list each variation (tahun/warna)
+            
+            // Level 2: Merk header (non-clickable)
+            merkHeader.innerHTML = `
+              <div class="flex items-center justify-between w-full p-2">
+                <div>
+                  <span class="font-semibold">${merk}</span>
+                  <span class="ml-2 text-xs bg-gray-100 text-gray-800 px-1.5 py-0.5 rounded">Kumulatif</span>
+                </div>
+              </div>
+            `;
+            // Remove clickable/hover effects
+            merkHeader.classList.remove('hover:bg-gray-50', 'cursor-pointer'); 
+            
+            // Level 3: List of each item variation
+            const itemList = document.createElement('div');
+            // Use same padding as individual unit list, but no 'hidden' class
+            itemList.className = 'pl-6 pr-2 py-1 bg-gray-50'; 
+            
+            merkItems
+              .filter(item => item.stok && item.stok > 0) // Only show items with stock
+              .sort((a,b) => (a.tahunPembelian || 0) - (b.tahunPembelian || 0)) // Sort by year
+              .forEach(item => {
+
+                const itemRow = document.createElement('div');
+                itemRow.className = 'flex justify-between items-center py-1.5 border-t border-gray-200 first:border-t-0';
+                itemRow.innerHTML = `
+                  <div class="text-sm">
+                    <span>Th. ${item.tahunPembelian || '-'}</span>
+                    <span class="ml-2 text-xs bg-white border px-1.5 py-0.5 rounded">Warna: ${item.warna || '-'}</span>
+                    <span class="ml-2 text-sm text-gray-600 font-medium">(Stok: ${item.stok})</span>
+                  </div>
+                  <button data-alat-id="${item.id}" class="btn-add-latihan px-2 py-1 bg-green-600 text-white rounded text-sm flex-shrink-0">Tambah</button>
+                `;
+                itemList.appendChild(itemRow);
+            });
+            
+            merkDiv.appendChild(merkHeader);
+            
+            // Only append itemList if it actually has items
+            if (itemList.hasChildNodes()) {
+                merkDiv.appendChild(itemList);
+            } else {
+                 // Optional: add a note if all variations are out of stock
+                 const totalStok = merkItems.reduce((sum, item) => sum + (item.stok || 0), 0);
+                 if (totalStok <= 0) {
+                    merkHeader.querySelector('div div').insertAdjacentHTML('beforeend', '<span class="ml-2 text-sm text-red-500">(Stok habis)</span>');
+                 }
+            }
+            // --- AKHIR PERUBAHAN ---
       }
       
       contentDiv.appendChild(merkDiv);
@@ -271,6 +307,7 @@ function openJumlahModal(alat) {
       <div class="fixed inset-0 bg-black bg-opacity-50"></div>
       <div class="bg-white rounded-lg shadow-xl w-full max-w-md m-4 p-6 relative z-10">
         <h3 class="text-lg font-bold mb-2">Jumlah untuk ${alat.nama}</h3>
+        <p class="text-sm text-gray-600 mb-2">Merk: ${alat.merk || '-'} | Th: ${alat.tahunPembelian || '-'} | Warna: ${alat.warna || '-'}</p>
         <form id="form-jumlah-select">
           <div class="mb-4">
             <label class="block text-sm font-medium text-gray-700 mb-2">Masukkan jumlah (maks ${max}):</label>
@@ -294,8 +331,18 @@ function openJumlahModal(alat) {
       showMessage('Jumlah tidak valid', 'error');
       return;
     }
-    // Create unique cart entry key
-    const cartKey = `${id}_${Date.now()}`;
+    // Create unique cart entry key (menggunakan alat.id karena ini untuk item kumulatif spesifik)
+    const cartKey = alat.id; // Gunakan ID alat sebagai kunci
+    
+    // Cek jika sudah ada di keranjang
+    if (state.latihanCart[cartKey]) {
+        // Jika sudah ada, tanyakan apakah mau diganti
+        if (!confirm('Item ini sudah ada di keranjang. Ganti jumlah?')) {
+            modal.remove();
+            return;
+        }
+    }
+
     state.latihanCart[cartKey] = { data: alat, jumlah: n };
     renderCart();
     modal.remove();
@@ -327,8 +374,9 @@ function handleAdd(button) {
       return;
     }
     
-    // Create unique cart entry key
-    const cartKey = `${alatId}_${Date.now()}`;
+    // Buat kunci keranjang unik berdasarkan ID unit
+    const cartKey = unit.id; 
+    
     state.latihanCart[cartKey] = { 
       data: alat, 
       units: [{ unitId: unit.id, kodeInv: unit.kodeInv }] 
