@@ -63,8 +63,8 @@ Aplikasi ini adalah sistem manajemen aset yang dirancang untuk melacak peralatan
 
 1.  **Kloning Repositori:**
     ```bash
-    git clone [URL_REPOSITORI_ANDA]
-    ```
+    git clone [https://github.com/Sticcboi/LOGISTIK-MAPALAST]
+    ```
 
 2.  **Konfigurasi Database:**
     Pastikan Anda telah mengisi kredensial Firebase di `firebase-config.js` dan **Security Rules** Firestore sudah di-*deploy*.
