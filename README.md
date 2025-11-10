@@ -1,8 +1,8 @@
 <div align="center">
   
-# =============================================== 
+# =============================================
 # 🔴 SISTEM LOGISTIK MAPALAST 🔴
-# ===============================================
+# =============================================
   
 ### APLIKASI WEB INVENTARIS HIBRIDA (UNIT & STOK)
   
@@ -14,11 +14,12 @@ Aplikasi ini adalah sistem manajemen aset yang dirancang untuk melacak peralatan
 
 <div align="center">
 
-| | 💾 TEKNOLOGI INTI 💾 | |
-| :---: | :---: | :---: |
-| **Frontend** | JavaScript (ES Modules) + HTML5 | **Backend** | Firebase Firestore & Auth |
-| **Styling** | [Tailwind CSS](https://tailwindcss.com/) | **Tools** | jsPDF & SheetJS (XLSX Export) |
-
+| 💾 TEKNOLOGI INTI 💾 | Detail |
+| :--- | :--- |
+| **Frontend** | JavaScript (ES Modules) + HTML5 |
+| **Styling** | [Tailwind CSS](https://tailwindcss.com/) |
+| **Backend** | Firebase Firestore & Auth |
+| **Tools** | jsPDF & SheetJS (XLSX Export) |
 </div>
 
 ---
@@ -37,19 +38,6 @@ Aplikasi ini adalah sistem manajemen aset yang dirancang untuk melacak peralatan
 * **Catatan Kegiatan:** Halaman yang dapat diakses oleh anggota atau publik untuk mencatat penggunaan alat untuk latihan.
 
 ---
-
-## 📞 KONTAK / CONTACT PERSON
-
-Jika Anda menemukan kendala, *bug*, atau memiliki pertanyaan terkait aplikasi ini, **silakan hubungi**:
-
-<div align="center">
-
-## MP
-
-</div>
-
----
-
 ## 💻 STRUKTUR ARSITEKTUR
 
 <div align="center">
@@ -84,13 +72,29 @@ Jika Anda menemukan kendala, *bug*, atau memiliki pertanyaan terkait aplikasi in
 3.  **Akses Antarmuka:**
     Buka proyek menggunakan server lokal (disarankan) atau langsung buka file HTML:
     
-    | Antarmuka | File | Akses |
-    | :--- | :--- | :--- |
-    | **Admin Dashboard** | `/index.html` | Membutuhkan Login Admin |
-    | **Catat Kegiatan** | `/public-kegiatan.html` | Publik (Tidak Perlu Login) |
+<div align="center">
+
+| Antarmuka | File | Akses |
+| :--- | :--- | :--- |
+| **Admin Dashboard** | `/index.html` | Membutuhkan Login Admin |
+| **Catat Kegiatan** | `/public-kegiatan.html` | Publik (Tidak Perlu Login) |
+
+</div>
+
+---
+
+## 📞 KONTAK / CONTACT PERSON
+
+Jika Anda menemukan kendala, *bug*, atau memiliki pertanyaan terkait aplikasi ini, **silakan hubungi**:
 
 <div align="center">
 
-# ===============================================
+## MP
+
+</div>
+
+<div align="center">
+
+# =============================================
 
 </div>
